@@ -1,141 +1,116 @@
 <!DOCTYPE html>
-<html lang="id" class="h-full">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hub Jadwal Podcast & Konten Tim</title>
+    <title>Manajemen Podcast & Hub Konten Tim</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Inter & FontAwesome Icons -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome untuk ikon -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: { sans: ['Inter', 'sans-serif'] },
-                }
-            }
-        }
-    </script>
 </head>
-<body class="bg-slate-50 text-slate-800 h-full flex flex-col font-sans antialiased">
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen">
 
-    <!-- Custom Modal for Notifications -->
-    <div id="customModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm hidden">
-        <div class="bg-white rounded-2xl p-6 max-w-sm w-full mx-4 shadow-2xl border border-slate-100 transform transition-all">
-            <div id="modalIcon" class="text-4xl mb-3 text-center"></div>
-            <h3 id="modalTitle" class="text-lg font-bold text-slate-900 text-center mb-1">Pemberitahuan</h3>
-            <p id="modalMessage" class="text-slate-600 text-sm text-center mb-6"></p>
-            <div id="modalActions" class="flex justify-center gap-3">
-                <button onclick="closeModal()" class="w-full py-2.5 px-4 bg-indigo-600 text-white rounded-xl font-medium hover:bg-indigo-700 transition shadow-sm">OK</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Header / Navbar -->
-    <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-xs">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+    <!-- Header / Navigasi Utama -->
+    <header class="bg-indigo-700 text-white shadow-md">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
             <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-md shadow-indigo-100">
-                    <i class="fa-solid fa-podcast text-lg"></i>
+                <div class="bg-indigo-600 p-2.5 rounded-xl border border-indigo-500 shadow-inner">
+                    <i class="fa-solid fa-podcast text-2xl text-amber-300"></i>
                 </div>
                 <div>
-                    <h1 class="font-bold text-slate-900 text-lg leading-snug">Podcast & Konten Hub</h1>
-                    <p class="text-xs text-slate-500">LKP, LKU, LKS, LDM, LBH, LKM, LIT</p>
+                    <h1 class="text-xl font-bold tracking-tight">Hub Podcast & Konten Tim</h1>
+                    <p class="text-xs text-indigo-200">Kolaborasi Divisi: LKP, LKU, LKS, LDM, LBH, LKM, LIT</p>
                 </div>
             </div>
-            
-            <div class="flex items-center space-x-3">
-                <div id="dbStatusBadge" class="flex items-center px-3 py-1 bg-amber-50 text-amber-700 border border-amber-200 rounded-full text-xs font-medium">
-                    <span class="w-2 h-2 rounded-full bg-amber-500 mr-2 animate-pulse"></span>
-                    <span id="dbStatusText">Mode Lokal / Konfigurasi</span>
-                </div>
-                <button onclick="openSettingsModal()" class="p-2 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-xl transition" title="Konfigurasi Firebase">
-                    <i class="fa-solid fa-gear text-lg"></i>
+            <!-- Tab Navigasi -->
+            <div class="flex bg-indigo-900/60 p-1 rounded-xl border border-indigo-600">
+                <button onclick="switchTab('podcast')" id="tab-podcast" class="px-4 py-2 text-sm font-medium rounded-lg transition-all bg-white text-indigo-900 shadow">
+                    <i class="fa-solid fa-calendar-days mr-2"></i>Jadwal Podcast
+                </button>
+                <button onclick="switchTab('materi')" id="tab-materi" class="px-4 py-2 text-sm font-medium rounded-lg transition-all text-indigo-100 hover:text-white">
+                    <i class="fa-solid fa-file-pen mr-2"></i>Kirim Materi (Meme/Carousel)
                 </button>
             </div>
         </div>
     </header>
 
-    <!-- Main Container -->
-    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col">
-        
-        <!-- Tab Navigation -->
-        <div class="flex space-x-2 border-b border-slate-200 pb-3 mb-6 overflow-x-auto">
-            <button onclick="switchTab('podcast')" id="tabPodcast" class="flex items-center space-x-2 py-2.5 px-5 rounded-xl font-semibold text-sm transition bg-indigo-600 text-white shadow-sm shrink-0">
-                <i class="fa-solid fa-calendar-days"></i>
-                <span>Jadwal Podcast & Request</span>
-            </button>
-            <button onclick="switchTab('content')" id="tabContent" class="flex items-center space-x-2 py-2.5 px-5 rounded-xl font-semibold text-sm transition bg-white text-slate-600 hover:bg-slate-100 border border-slate-200 shrink-0">
-                <i class="fa-solid fa-photo-film"></i>
-                <span>Kirim Materi Konten (Meme/Carousel)</span>
-            </button>
-        </div>
+    <!-- Konten Utama -->
+    <main class="max-w-7xl mx-auto px-4 py-8">
 
-        <!-- ================= TAB 1: PODCAST ================= -->
-        <div id="viewPodcast" class="space-y-6">
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- Form Request Podcast -->
-                <div class="lg:col-span-1 bg-white rounded-2xl p-6 border border-slate-200 shadow-xs flex flex-col">
-                    <div class="flex items-center justify-between mb-4">
-                        <h2 class="font-bold text-slate-900 text-base flex items-center">
-                            <i class="fa-solid fa-circle-plus text-indigo-600 mr-2"></i> Request Jadwal Podcast
-                        </h2>
-                    </div>
-                    <form id="podcastForm" onsubmit="handlePodcastSubmit(event)" class="space-y-4 flex-1 flex flex-col justify-between">
-                        <div class="space-y-4">
+        <!-- ================= SECTION 1: PODCAST ================= -->
+        <section id="section-podcast" class="space-y-8">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                
+                <!-- Form Input Podcast -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 h-fit">
+                    <h2 class="text-lg font-bold text-slate-900 mb-1 flex items-center">
+                        <i class="fa-solid fa-circle-plus text-indigo-600 mr-2"></i>Request Jadwal Podcast
+                    </h2>
+                    <p class="text-xs text-slate-500 mb-5">Usulkan jadwal, tema, host, dan narasumber podcast tim Anda.</p>
+                    
+                    <form id="form-podcast" onsubmit="submitPodcast(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">Divisi / Tim Pengusul</label>
+                            <select id="p_divisi" required class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                                <option value="" disabled selected>-- Pilih Tim --</option>
+                                <option value="LKP">LKP</option>
+                                <option value="LKU">LKU</option>
+                                <option value="LKS">LKS</option>
+                                <option value="LDM">LDM</option>
+                                <option value="LBH">LBH</option>
+                                <option value="LKM">LKM</option>
+                                <option value="LIT">LIT</option>
+                            </select>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
                             <div>
-                                <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Divisi / Tim Pengusul</label>
-                                <select id="podDivision" required class="w-full rounded-xl border border-slate-300 py-2.5 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white">
-                                    <option value="" disabled selected>Pilih Divisi...</option>
-                                    <option value="LKP">LKP</option>
-                                    <option value="LKU">LKU</option>
-                                    <option value="LKS">LKS</option>
-                                    <option value="LDM">LDM</option>
-                                    <option value="LBH">LBH</option>
-                                    <option value="LKM">LKM</option>
-                                    <option value="LIT">LIT</option>
-                                </select>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">Tanggal Request</label>
+                                <input type="date" id="p_tanggal" required class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
                             </div>
                             <div>
-                                <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Judul / Tema Podcast</label>
-                                <input type="text" id="podTitle" required placeholder="Contoh: Ep. 12 - Transformasi Digital" class="w-full rounded-xl border border-slate-300 py-2.5 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                            </div>
-                            <div class="grid grid-cols-2 gap-3">
-                                <div>
-                                    <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Tanggal</label>
-                                    <input type="date" id="podDate" required class="w-full rounded-xl border border-slate-300 py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Jam Tayang</label>
-                                    <input type="time" id="podTime" required class="w-full rounded-xl border border-slate-300 py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" value="15:00">
-                                </div>
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Host & Narasumber</label>
-                                <input type="text" id="podPeople" required placeholder="Host: Budi | Narsum: Dr. Andi" class="w-full rounded-xl border border-slate-300 py-2.5 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Catatan / Link Brief (Opsional)</label>
-                                <textarea id="podNotes" rows="2" placeholder="Link Google Doc atau catatan..." class="w-full rounded-xl border border-slate-300 py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"></textarea>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">Jam / Sesi</label>
+                                <input type="time" id="p_jam" required class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
                             </div>
                         </div>
-                        <button type="submit" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-xl text-sm transition shadow-sm shadow-indigo-100 flex items-center justify-center space-x-2">
-                            <i class="fa-solid fa-paper-plane"></i>
-                            <span>Kirim Request Jadwal</span>
+
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">Judul / Topik Utama</label>
+                            <input type="text" id="p_judul" placeholder="Contoh: Diskusi Regulasi Baru..." required class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">Host Bertugas</label>
+                                <input type="text" id="p_host" placeholder="Nama Host" required class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">Narasumber / Guest</label>
+                                <input type="text" id="p_narsum" placeholder="Nama Narasumber" required class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">Catatan / Link Pendukung</label>
+                            <textarea id="p_catatan" rows="2" placeholder="Link Google Drive, skrip, dll." class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"></textarea>
+                        </div>
+
+                        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 rounded-xl transition text-sm shadow-sm">
+                            <i class="fa-solid fa-paper-plane mr-2"></i>Kirim Request Jadwal
                         </button>
                     </form>
                 </div>
 
-                <!-- Rekap & Tabel Jadwal Podcast -->
-                <div class="lg:col-span-2 bg-white rounded-2xl p-6 border border-slate-200 shadow-xs flex flex-col">
-                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-3">
-                        <h2 class="font-bold text-slate-900 text-base flex items-center">
-                            <i class="fa-solid fa-calendar-check text-indigo-600 mr-2"></i> Daftar Jadwal Podcast & Approval
-                        </h2>
+                <!-- Tabel Rekapitulasi Podcast -->
+                <div class="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
                         <div>
-                            <select id="filterPodDiv" onchange="renderPodcastTable()" class="text-xs border border-slate-300 rounded-lg px-2.5 py-1.5 bg-slate-50 focus:outline-none">
+                            <h2 class="text-lg font-bold text-slate-900">Daftar Jadwal & Status Podcast</h2>
+                            <p class="text-xs text-slate-500">Pantau jadwal yang sudah diajukan, status persetujuan, dan penyesuaian waktu.</p>
+                        </div>
+                        <div class="flex gap-2">
+                            <select id="filter-divisi" onchange="renderPodcast()" class="px-3 py-1.5 border border-slate-300 rounded-lg text-xs bg-slate-50">
                                 <option value="ALL">Semua Tim</option>
                                 <option value="LKP">LKP</option>
                                 <option value="LKU">LKU</option>
@@ -148,450 +123,337 @@
                         </div>
                     </div>
 
-                    <div class="overflow-x-auto flex-1">
+                    <div class="overflow-x-auto flex-grow">
                         <table class="w-full text-left border-collapse">
                             <thead>
-                                <tr class="border-b border-slate-100 text-xs font-semibold text-slate-400 uppercase">
-                                    <th class="py-3 px-3">Tim & Waktu</th>
-                                    <th class="py-3 px-3">Judul & Detail</th>
+                                <tr class="border-b border-slate-200 text-slate-400 text-xs uppercase tracking-wider">
+                                    <th class="py-3 px-3">Tim & Jadwal</th>
+                                    <th class="py-3 px-3">Topik / Tema</th>
+                                    <th class="py-3 px-3">Host & Narasumber</th>
                                     <th class="py-3 px-3">Status</th>
                                     <th class="py-3 px-3 text-right">Aksi Admin</th>
                                 </tr>
                             </thead>
-                            <tbody id="podcastTableBody" class="divide-y divide-slate-100 text-sm">
-                                <!-- Data rows inserted dynamically -->
+                            <tbody id="table-podcast-body" class="divide-y divide-slate-100 text-sm">
+                                <!-- Data dimuat dinamis lewat JavaScript -->
                             </tbody>
                         </table>
                     </div>
                 </div>
-            </div>
-        </div>
 
-        <!-- ================= TAB 2: KONTEN (MEME/CAROUSEL) ================= -->
-        <div id="viewContent" class="space-y-6 hidden">
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            </div>
+        </section>
+
+        <!-- ================= SECTION 2: MATERI KONTEN (MEME/CAROUSEL) ================= -->
+        <section id="section-materi" class="space-y-8 hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                
                 <!-- Form Kirim Materi -->
-                <div class="lg:col-span-1 bg-white rounded-2xl p-6 border border-slate-200 shadow-xs flex flex-col">
-                    <div class="mb-4">
-                        <h2 class="font-bold text-slate-900 text-base flex items-center">
-                            <i class="fa-solid fa-cloud-arrow-up text-indigo-600 mr-2"></i> Kirim Materi Konten
-                        </h2>
-                        <p class="text-xs text-slate-500 mt-0.5">Kirim link tulisan/carousel kapanpun bebas tanpa antre.</p>
-                    </div>
-                    <form id="contentForm" onsubmit="handleContentSubmit(event)" class="space-y-4 flex-1 flex flex-col justify-between">
-                        <div class="space-y-4">
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Divisi Pengirim</label>
-                                <select id="contentDivision" required class="w-full rounded-xl border border-slate-300 py-2.5 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white">
-                                    <option value="" disabled selected>Pilih Divisi...</option>
-                                    <option value="LKP">LKP</option>
-                                    <option value="LKU">LKU</option>
-                                    <option value="LKS">LKS</option>
-                                    <option value="LDM">LDM</option>
-                                    <option value="LBH">LBH</option>
-                                    <option value="LKM">LKM</option>
-                                    <option value="LIT">LIT</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Jenis Konten</label>
-                                <select id="contentType" required class="w-full rounded-xl border border-slate-300 py-2.5 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white">
-                                    <option value="Carousel">Carousel / Infografis</option>
-                                    <option value="Meme">Meme / Quotes Kreatif</option>
-                                    <option value="Artikel Singkat">Artikel / Opini Singkat</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Judul / Topik Materi</label>
-                                <input type="text" id="contentTitle" required placeholder="Contoh: Tips Keamanan Data" class="w-full rounded-xl border border-slate-300 py-2.5 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Link Tulisan / Google Doc</label>
-                                <input type="url" id="contentUrl" required placeholder="https://docs.google.com/..." class="w-full rounded-xl border border-slate-300 py-2.5 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Catatan Tambahan</label>
-                                <textarea id="contentNotes" rows="2" placeholder="Poin penting untuk tim medsos..." class="w-full rounded-xl border border-slate-300 py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"></textarea>
-                            </div>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 h-fit">
+                    <h2 class="text-lg font-bold text-slate-900 mb-1 flex items-center">
+                        <i class="fa-solid fa-cloud-arrow-up text-amber-500 mr-2"></i>Kirim Bahan Tulisan / Link
+                    </h2>
+                    <p class="text-xs text-slate-500 mb-5">Kirimkan draf materi tulisan kapan pun untuk diolah menjadi Meme atau Carousel.</p>
+                    
+                    <form id="form-materi" onsubmit="submitMateri(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">Divisi Pengirim</label>
+                            <select id="m_divisi" required class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                                <option value="" disabled selected>-- Pilih Tim --</option>
+                                <option value="LKP">LKP</option>
+                                <option value="LKU">LKU</option>
+                                <option value="LKS">LKS</option>
+                                <option value="LDM">LDM</option>
+                                <option value="LBH">LBH</option>
+                                <option value="LKM">LKM</option>
+                                <option value="LIT">LIT</option>
+                            </select>
                         </div>
-                        <button type="submit" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-xl text-sm transition shadow-sm shadow-indigo-100 flex items-center justify-center space-x-2">
-                            <i class="fa-solid fa-paper-plane"></i>
-                            <span>Kirim Materi Sekarang</span>
+
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">Jenis Konten Target</label>
+                            <select id="m_jenis" required class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                                <option value="Carousel">Carousel / Infografis</option>
+                                <option value="Meme">Meme / Konten Visual Ringan</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">Judul / Topik Tulisan</label>
+                            <input type="text" id="m_judul" placeholder="Contoh: Poin Penting Aturan..." required class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">Link Tulisan / Google Doc</label>
+                            <input type="url" id="m_link" placeholder="https://docs.google.com/..." required class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">Catatan Tambahan</label>
+                            <textarea id="m_catatan" rows="3" placeholder="Pesan untuk tim kreatif..." class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none"></textarea>
+                        </div>
+
+                        <button type="submit" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-medium py-2.5 rounded-xl transition text-sm shadow-sm">
+                            <i class="fa-solid fa-paper-plane mr-2"></i>Kirim Materi Konten
                         </button>
                     </form>
                 </div>
 
                 <!-- Daftar Materi Masuk -->
-                <div class="lg:col-span-2 bg-white rounded-2xl p-6 border border-slate-200 shadow-xs flex flex-col">
-                    <div class="flex items-center justify-between mb-4">
-                        <h2 class="font-bold text-slate-900 text-base flex items-center">
-                            <i class="fa-solid fa-folder-open text-indigo-600 mr-2"></i> Arsip Bahan Meme & Carousel Masuk
-                        </h2>
-                        <select id="filterContentDiv" onchange="renderContentTable()" class="text-xs border border-slate-300 rounded-lg px-2.5 py-1.5 bg-slate-50 focus:outline-none">
-                            <option value="ALL">Semua Tim</option>
-                            <option value="LKP">LKP</option>
-                            <option value="LKU">LKU</option>
-                            <option value="LKS">LKS</option>
-                            <option value="LDM">LDM</option>
-                            <option value="LBH">LBH</option>
-                            <option value="LKM">LKM</option>
-                            <option value="LIT">LIT</option>
-                        </select>
-                    </div>
+                <div class="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col">
+                    <h2 class="text-lg font-bold text-slate-900 mb-1">Arsip Materi Konten Masuk</h2>
+                    <p class="text-xs text-slate-500 mb-6">Daftar link tulisan dan draf materi dari seluruh divisi yang siap diolah.</p>
 
-                    <div class="overflow-x-auto flex-1">
+                    <div class="overflow-x-auto flex-grow">
                         <table class="w-full text-left border-collapse">
                             <thead>
-                                <tr class="border-b border-slate-100 text-xs font-semibold text-slate-400 uppercase">
-                                    <th class="py-3 px-3">Tim & Waktu</th>
-                                    <th class="py-3 px-3">Jenis & Topik</th>
-                                    <th class="py-3 px-3">Link Tulisan</th>
-                                    <th class="py-3 px-3 text-right">Aksi</th>
+                                <tr class="border-b border-slate-200 text-slate-400 text-xs uppercase tracking-wider">
+                                    <th class="py-3 px-3">Divisi & Waktu</th>
+                                    <th class="py-3 px-3">Target</th>
+                                    <th class="py-3 px-3">Judul & Catatan</th>
+                                    <th class="py-3 px-3 text-right">Aksi Link</th>
                                 </tr>
                             </thead>
-                            <tbody id="contentTableBody" class="divide-y divide-slate-100 text-sm">
-                                <!-- Data rows inserted dynamically -->
+                            <tbody id="table-materi-body" class="divide-y divide-slate-100 text-sm">
+                                <!-- Data dimuat dinamis lewat JavaScript -->
                             </tbody>
                         </table>
                     </div>
                 </div>
+
             </div>
-        </div>
+        </section>
 
     </main>
 
-    <!-- Settings / Firebase Config Modal -->
-    <div id="settingsModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm hidden">
-        <div class="bg-white rounded-2xl p-6 max-w-lg w-full mx-4 shadow-2xl border border-slate-100">
-            <div class="flex items-center justify-between mb-4">
-                <h3 class="font-bold text-slate-900 text-base flex items-center">
-                    <i class="fa-solid fa-database text-indigo-600 mr-2"></i> Konfigurasi Firebase Firestore
-                </h3>
-                <button onclick="closeSettingsModal()" class="text-slate-400 hover:text-slate-600">
-                    <i class="fa-solid fa-xmark text-lg"></i>
-                </button>
-            </div>
-            <p class="text-xs text-slate-500 mb-4">
-                Masukkan objek konfigurasi Firebase Anda agar aplikasi tersambung secara <i>real-time</i> ke database cloud. Jika dikosongkan, aplikasi memakai LocalStorage (Demo).
-            </p>
-            <div class="space-y-3 mb-6">
-                <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1">Firebase Config JSON</label>
-                    <textarea id="firebaseConfigInput" rows="5" placeholder='{
-  "apiKey": "AIzaSy...",
-  "authDomain": "...",
-  "projectId": "...",
-  "storageBucket": "...",
-  "messagingSenderId": "...",
-  "appId": "..."
-}' class="w-full rounded-xl border border-slate-300 p-3 text-xs font-mono focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
-                </div>
-            </div>
-            <div class="flex justify-end gap-3">
-                <button onclick="closeSettingsModal()" class="px-4 py-2 border border-slate-300 text-slate-700 rounded-xl text-sm font-medium hover:bg-slate-50 transition">Batal</button>
-                <button onclick="saveFirebaseConfig()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-medium transition shadow-sm">Simpan Konfigurasi</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Firebase SDK Imports -->
+    <!-- Firebase SDK Scripts -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, updateDoc, deleteDoc, doc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        let db = null;
-        let isFirebaseActive = false;
+        // Konfigurasi Firebase Anda
+        const firebaseConfig = {
+            apiKey: "AIzaSyDUQtMUibWA1atiFRnfh3FWIzLAd6f6C3M",
+            authDomain: "balikpapanpodcast-e63f2.firebaseapp.com",
+            databaseURL: "https://balikpapanpodcast-e63f2-default-rtdb.firebaseio.com",
+            projectId: "balikpapanpodcast-e63f2",
+            storageBucket: "balikpapanpodcast-e63f2.firebasestorage.app",
+            messagingSenderId: "316601698941",
+            appId: "1:316601698941:web:860e854cdde37c678f7f14"
+        };
 
-        let localPodcasts = JSON.parse(localStorage.getItem('hub_podcasts')) || [
-            { id: 'demo1', division: 'LKP', title: 'Ep. 01 - Pengantar Literasi Digital', date: '2026-03-01', time: '14:00', people: 'Host: Rina | Narsum: Prof. Budi', notes: 'Membahas dasar literasi.', status: 'Disetujui', timestamp: '2026-02-20' }
-        ];
+        // Inisialisasi Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
 
-        let localContents = JSON.parse(localStorage.getItem('hub_contents')) || [
-            { id: 'demo1', division: 'LBH', type: 'Carousel', title: 'Hak-hak Dasar Mahasiswa', url: 'https://docs.google.com/document/d/example', notes: 'Infografis 5 slide.', timestamp: '2026-02-21' }
-        ];
+        // Global functions untuk diakses HTML window
+        window.db = db;
+        window.collection = collection;
+        window.addDoc = addDoc;
+        window.getDocs = getDocs;
+        window.doc = doc;
+        window.updateDoc = updateDoc;
+        window.deleteDoc = deleteDoc;
+        window.onSnapshot = onSnapshot;
+        window.query = query;
+        window.orderBy = orderBy;
 
-        window.podcastsData = localPodcasts;
-        window.contentsData = localContents;
-
-        // Initialize Firebase from LocalStorage if available
-        const savedConfig = localStorage.getItem('hub_firebase_cfg');
-        if (savedConfig) {
-            try {
-                const firebaseConfig = JSON.parse(savedConfig);
-                const app = initializeApp(firebaseConfig);
-                db = getFirestore(app);
-                isFirebaseActive = true;
-                document.getElementById('dbStatusBadge').className = "flex items-center px-3 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full text-xs font-medium";
-                document.getElementById('dbStatusText').innerText = "Firebase Terhubung (Real-time)";
-                setupRealtimeListeners(db);
-            } catch (e) {
-                console.error("Gagal inisialisasi Firebase:", e);
-            }
-        }
-
-        function setupRealtimeListeners(database) {
-            // Listen Podcasts
-            const qPod = query(collection(database, "podcasts"), orderBy("timestamp", "desc"));
-            onSnapshot(qPod, (snapshot) => {
-                window.podcastsData = [];
-                snapshot.forEach((docSnap) => {
-                    window.podcastsData.push({ id: docSnap.id, ...docSnap.data() });
-                });
-                renderPodcastTable();
-            }, (error) => { console.error("Error podcast listener:", error); });
-
-            // Listen Contents
-            const qCon = query(collection(database, "contents"), orderBy("timestamp", "desc"));
-            onSnapshot(qCon, (snapshot) => {
-                window.contentsData = [];
-                snapshot.forEach((docSnap) => {
-                    window.contentsData.push({ id: docSnap.id, ...docSnap.data() });
-                });
-                renderContentTable();
-            }, (error) => { console.error("Error content listener:", error); });
-        }
-
-        // --- Global Handlers exposed to window ---
-        window.handlePodcastSubmit = async function(e) {
-            e.preventDefault();
-            const newPod = {
-                division: document.getElementById('podDivision').value,
-                title: document.getElementById('podTitle').value,
-                date: document.getElementById('podDate').value,
-                time: document.getElementById('podTime').value,
-                people: document.getElementById('podPeople').value,
-                notes: document.getElementById('podNotes').value,
-                status: 'Pending',
-                timestamp: new Date().toISOString()
-            };
-
-            if (isFirebaseActive && db) {
-                try {
-                    await addDoc(collection(db, "podcasts"), newPod);
-                    showModal('Berhasil!', 'Request jadwal podcast berhasil dikirim ke database cloud.');
-                } catch (err) {
-                    showModal('Gagal', 'Terjadi kesalahan saat menyimpan ke Firebase.', 'fa-solid fa-triangle-exclamation text-rose-600');
-                }
-            } else {
-                newPod.id = 'loc_' + Date.now();
-                window.podcastsData.unshift(newPod);
-                localStorage.setItem('hub_podcasts', JSON.stringify(window.podcastsData));
-                renderPodcastTable();
-                showModal('Berhasil (Lokal)!', 'Request jadwal disimpan di mode lokal.');
-            }
-            document.getElementById('podcastForm').reset();
-        }
-
-        window.updatePodcastStatus = async function(id, newStatus) {
-            if (isFirebaseActive && db && !id.toString().startsWith('loc_')) {
-                try {
-                    await updateDoc(doc(db, "podcasts", id), { status: newStatus });
-                } catch (err) { console.error(err); }
-            } else {
-                const p = window.podcastsData.find(item => item.id === id);
-                if (p) p.status = newStatus;
-                localStorage.setItem('hub_podcasts', JSON.stringify(window.podcastsData));
-                renderPodcastTable();
-            }
-        }
-
-        window.deletePodcastItem = async function(id) {
-            if (isFirebaseActive && db && !id.toString().startsWith('loc_')) {
-                try {
-                    await deleteDoc(doc(db, "podcasts", id));
-                } catch (err) { console.error(err); }
-            } else {
-                window.podcastsData = window.podcastsData.filter(item => item.id !== id);
-                localStorage.setItem('hub_podcasts', JSON.stringify(window.podcastsData));
-                renderPodcastTable();
-            }
-        }
-
-        window.handleContentSubmit = async function(e) {
-            e.preventDefault();
-            const newContent = {
-                division: document.getElementById('contentDivision').value,
-                type: document.getElementById('contentType').value,
-                title: document.getElementById('contentTitle').value,
-                url: document.getElementById('contentUrl').value,
-                notes: document.getElementById('contentNotes').value,
-                timestamp: new Date().toISOString()
-            };
-
-            if (isFirebaseActive && db) {
-                try {
-                    await addDoc(collection(db, "contents"), newContent);
-                    showModal('Terkirim!', 'Materi konten berhasil dikirim ke database cloud.');
-                } catch (err) {
-                    showModal('Gagal', 'Terjadi kesalahan.', 'fa-solid fa-triangle-exclamation text-rose-600');
-                }
-            } else {
-                newContent.id = 'loc_' + Date.now();
-                window.contentsData.unshift(newContent);
-                localStorage.setItem('hub_contents', JSON.stringify(window.contentsData));
-                renderContentTable();
-                showModal('Terkirim (Lokal)!', 'Materi konten disimpan di mode lokal.');
-            }
-            document.getElementById('contentForm').reset();
-        }
-
-        window.deleteContentItem = async function(id) {
-            if (isFirebaseActive && db && !id.toString().startsWith('loc_')) {
-                try {
-                    await deleteDoc(doc(db, "contents", id));
-                } catch (err) { console.error(err); }
-            } else {
-                window.contentsData = window.contentsData.filter(item => item.id !== id);
-                localStorage.setItem('hub_contents', JSON.stringify(window.contentsData));
-                renderContentTable();
-            }
-        }
-
-        window.saveFirebaseConfig = function() {
-            const val = document.getElementById('firebaseConfigInput').value;
-            if (val.trim()) {
-                localStorage.setItem('hub_firebase_cfg', val);
-                location.reload();
-            }
-        }
+        // Load data real-time saat halaman siap
+        initRealtimeListeners();
     </script>
 
-    <!-- Standard UI Helper Script -->
+    <!-- Main Application Logic -->
     <script>
+        // Tab Switcher
         function switchTab(tab) {
-            const btnPod = document.getElementById('tabPodcast');
-            const btnCon = document.getElementById('tabContent');
-            const viewPod = document.getElementById('viewPodcast');
-            const viewCon = document.getElementById('viewContent');
+            const secPodcast = document.getElementById('section-podcast');
+            const secMateri = document.getElementById('section-materi');
+            const tabPodcast = document.getElementById('tab-podcast');
+            const tabMateri = document.getElementById('tab-materi');
 
             if (tab === 'podcast') {
-                btnPod.className = "flex items-center space-x-2 py-2.5 px-5 rounded-xl font-semibold text-sm transition bg-indigo-600 text-white shadow-sm shrink-0";
-                btnCon.className = "flex items-center space-x-2 py-2.5 px-5 rounded-xl font-semibold text-sm transition bg-white text-slate-600 hover:bg-slate-100 border border-slate-200 shrink-0";
-                viewPod.classList.remove('hidden');
-                viewCon.classList.add('hidden');
+                secPodcast.classList.remove('hidden');
+                secMateri.classList.add('hidden');
+                tabPodcast.className = "px-4 py-2 text-sm font-medium rounded-lg transition-all bg-white text-indigo-900 shadow";
+                tabMateri.className = "px-4 py-2 text-sm font-medium rounded-lg transition-all text-indigo-100 hover:text-white";
             } else {
-                btnCon.className = "flex items-center space-x-2 py-2.5 px-5 rounded-xl font-semibold text-sm transition bg-indigo-600 text-white shadow-sm shrink-0";
-                btnPod.className = "flex items-center space-x-2 py-2.5 px-5 rounded-xl font-semibold text-sm transition bg-white text-slate-600 hover:bg-slate-100 border border-slate-200 shrink-0";
-                viewCon.classList.remove('hidden');
-                viewPod.classList.add('hidden');
+                secPodcast.classList.add('hidden');
+                secMateri.classList.remove('hidden');
+                tabMateri.className = "px-4 py-2 text-sm font-medium rounded-lg transition-all bg-white text-indigo-900 shadow";
+                tabPodcast.className = "px-4 py-2 text-sm font-medium rounded-lg transition-all text-indigo-100 hover:text-white";
             }
         }
 
-        function showModal(title, message, iconClass = 'fa-solid fa-circle-check text-indigo-600') {
-            document.getElementById('modalTitle').innerText = title;
-            document.getElementById('modalMessage').innerText = message;
-            document.getElementById('modalIcon').innerHTML = `<i class="${iconClass}"></i>`;
-            document.getElementById('customModal').classList.remove('hidden');
-        }
-        function closeModal() {
-            document.getElementById('customModal').classList.add('hidden');
-        }
-        function openSettingsModal() {
-            const cfg = localStorage.getItem('hub_firebase_cfg') || '';
-            document.getElementById('firebaseConfigInput').value = cfg;
-            document.getElementById('settingsModal').classList.remove('hidden');
-        }
-        function closeSettingsModal() {
-            document.getElementById('settingsModal').classList.add('hidden');
-        }
+        // --- MANAJEMEN PODCAST ---
+        async function submitPodcast(e) {
+            e.preventDefault();
+            const data = {
+                divisi: document.getElementById('p_divisi').value,
+                tanggal: document.getElementById('p_tanggal').value,
+                jam: document.getElementById('p_jam').value,
+                judul: document.getElementById('p_judul').value,
+                host: document.getElementById('p_host').value,
+                narsum: document.getElementById('p_narsum').value,
+                catatan: document.getElementById('p_catatan').value,
+                status: 'Menunggu Persetujuan (Pending)',
+                createdAt: new Date().toISOString()
+            };
 
-        function renderPodcastTable() {
-            const tbody = document.getElementById('podcastTableBody');
-            const filterDiv = document.getElementById('filterPodDiv').value;
-            tbody.innerHTML = '';
-
-            const list = window.podcastsData || [];
-            const filtered = list.filter(p => filterDiv === 'ALL' || p.division === filterDiv);
-
-            if (filtered.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" class="py-6 text-center text-slate-400 text-xs">Belum ada data jadwal podcast.</td></tr>`;
-                return;
+            try {
+                await window.addDoc(window.collection(window.db, "podcast_schedules"), data);
+                alert("Berhasil! Request jadwal podcast telah dikirim.");
+                document.getElementById('form-podcast').reset();
+            } catch (error) {
+                console.error("Error adding document: ", error);
+                alert("Gagal mengirim data. Pastikan koneksi dan Firestore aktif.");
             }
+        }
 
-            filtered.forEach(p => {
-                let badgeColor = 'bg-amber-50 text-amber-700 border-amber-200';
-                if (p.status === 'Disetujui') badgeColor = 'bg-emerald-50 text-emerald-700 border-emerald-200';
-                if (p.status === 'Bentrok / Reschedule') badgeColor = 'bg-rose-50 text-rose-700 border-rose-200';
+        async function updateStatus(id, newStatus) {
+            try {
+                const docRef = window.doc(window.db, "podcast_schedules", id);
+                await window.updateDoc(docRef, { status: newStatus });
+            } catch (error) {
+                console.error("Error updating status: ", error);
+            }
+        }
 
-                const tr = document.createElement('tr');
-                tr.className = "hover:bg-slate-50/60 transition";
-                tr.innerHTML = `
-                    <td class="py-3 px-3">
-                        <span class="inline-block px-2 py-0.5 bg-indigo-50 text-indigo-700 border border-indigo-200 rounded font-bold text-xs mb-1">${p.division}</span>
-                        <div class="text-xs text-slate-500"><i class="fa-regular fa-calendar mr-1"></i>${p.date} • ${p.time}</div>
-                    </td>
-                    <td class="py-3 px-3">
-                        <div class="font-semibold text-slate-900">${escapeHtml(p.title)}</div>
-                        <div class="text-xs text-slate-500 mt-0.5"><i class="fa-solid fa-users mr-1"></i>${escapeHtml(p.people)}</div>
-                        ${p.notes ? `<div class="text-xs text-slate-400 italic mt-0.5"><i class="fa-solid fa-note-sticky mr-1"></i>${escapeHtml(p.notes)}</div>` : ''}
-                    </td>
-                    <td class="py-3 px-3">
-                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border ${badgeColor}">
-                            ${p.status}
-                        </span>
-                    </td>
-                    <td class="py-3 px-3 text-right space-x-1">
-                        <button onclick="updatePodcastStatus('${p.id}', 'Disetujui')" title="Setujui" class="p-1.5 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 rounded-lg transition"><i class="fa-solid fa-check"></i></button>
-                        <button onclick="updatePodcastStatus('${p.id}', 'Bentrok / Reschedule')" title="Tandai Bentrok" class="p-1.5 bg-rose-50 text-rose-600 hover:bg-rose-100 rounded-lg transition"><i class="fa-solid fa-triangle-exclamation"></i></button>
-                        <button onclick="deletePodcastItem('${p.id}')" title="Hapus" class="p-1.5 bg-slate-100 text-slate-600 hover:bg-slate-200 rounded-lg transition"><i class="fa-solid fa-trash"></i></button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
+        async function deletePodcast(id) {
+            if (confirm("Hapus jadwal ini?")) {
+                try {
+                    await window.deleteDoc(window.doc(window.db, "podcast_schedules", id));
+                } catch (error) {
+                    console.error("Error deleting: ", error);
+                }
+            }
+        }
+
+        // --- MANAJEMEN MATERI KONTEN ---
+        async function submitMateri(e) {
+            e.preventDefault();
+            const data = {
+                divisi: document.getElementById('m_divisi').value,
+                jenis: document.getElementById('m_jenis').value,
+                judul: document.getElementById('m_judul').value,
+                link: document.getElementById('m_link').value,
+                catatan: document.getElementById('m_catatan').value,
+                createdAt: new Date().toISOString()
+            };
+
+            try {
+                await window.addDoc(window.collection(window.db, "content_materials"), data);
+                alert("Berhasil! Bahan materi konten berhasil dikirim.");
+                document.getElementById('form-materi').reset();
+            } catch (error) {
+                console.error("Error addingateri: ", error);
+                alert("Gagal mengirim materi.");
+            }
+        }
+
+        async function deleteMateri(id) {
+            if (confirm("Hapus arsip materi ini?")) {
+                try {
+                    await window.deleteDoc(window.doc(window.db, "content_materials", id));
+                } catch (error) {
+                    console.error("Error deleting materi: ", error);
+                }
+            }
+        }
+
+        // --- REALTIME SYNC (FIREBASE LISTENERS) ---
+        let globalPodcastData = [];
+
+        function initRealtimeListeners() {
+            // Listener Podcast
+            const qPodcast = window.query(window.collection(window.db, "podcast_schedules"), window.orderBy("createdAt", "desc"));
+            window.onSnapshot(qPodcast, (snapshot) => {
+                globalPodcastData = [];
+                snapshot.forEach((doc) => {
+                    globalPodcastData.push({ id: doc.id, ...doc.data() });
+                });
+                renderPodcast();
+            });
+
+            // Listener Materi
+            const qMateri = window.query(window.collection(window.db, "content_materials"), window.orderBy("createdAt", "desc"));
+            window.onSnapshot(qMateri, (snapshot) => {
+                let html = "";
+                snapshot.forEach((doc) => {
+                    const d = doc.data();
+                    const badgeColor = d.jenis === 'Carousel' ? 'bg-sky-100 text-sky-700' : 'bg-pink-100 text-pink-700';
+                    html += `
+                        <tr class="hover:bg-slate-50 transition">
+                            <td class="py-3 px-3">
+                                <span class="font-bold text-slate-700">${d.divisi}</span>
+                                <div class="text-xs text-slate-400">${new Date(d.createdAt).toLocaleDateString('id-ID')}</div>
+                            </td>
+                            <td class="py-3 px-3">
+                                <span class="px-2.5 py-1 rounded-full text-xs font-semibold ${badgeColor}">${d.jenis}</span>
+                            </td>
+                            <td class="py-3 px-3">
+                                <div class="font-semibold text-slate-800">${d.judul}</div>
+                                <div class="text-xs text-slate-500">${d.catatan || '-'}</div>
+                            </td>
+                            <td class="py-3 px-3 text-right space-x-2">
+                                <a href="${d.link}" target="_blank" class="inline-flex items-center px-3 py-1 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded-lg text-xs font-medium transition">
+                                    <i class="fa-solid fa-link mr-1"></i> Buka Link
+                                </a>
+                                <button onclick="deleteMateri('${doc.id}')" class="text-slate-400 hover:text-rose-600 text-xs p-1">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                });
+                document.getElementById('table-materi-body').innerHTML = html || `<tr><td colspan="4" class="text-center py-6 text-slate-400">Belum ada materi konten yang dikirim.</td></tr>`;
             });
         }
 
-        function renderContentTable() {
-            const tbody = document.getElementById('contentTableBody');
-            const filterDiv = document.getElementById('filterContentDiv').value;
-            tbody.innerHTML = '';
+        function renderPodcast() {
+            const filter = document.getElementById('filter-divisi').value;
+            const filtered = filter === 'ALL' ? globalPodcastData : globalPodcastData.filter(item => item.divisi === filter);
 
-            const list = window.contentsData || [];
-            const filtered = list.filter(c => filterDiv === 'ALL' || c.division === filterDiv);
+            let html = "";
+            filtered.forEach(d => {
+                let badgeStatus = "bg-amber-100 text-amber-800 border-amber-200";
+                if (d.status.includes("Disetujui")) badgeStatus = "bg-emerald-100 text-emerald-800 border-emerald-200";
+                if (d.status.includes("Reschedule")) badgeStatus = "bg-rose-100 text-rose-800 border-rose-200";
 
-            if (filtered.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" class="py-6 text-center text-slate-400 text-xs">Belum ada bahan konten yang dikirim.</td></tr>`;
-                return;
-            }
-
-            filtered.forEach(c => {
-                let typeColor = 'bg-purple-50 text-purple-700 border-purple-200';
-                if (c.type === 'Meme') typeColor = 'bg-sky-50 text-sky-700 border-sky-200';
-
-                const dateStr = c.timestamp ? c.timestamp.split('T')[0] : '';
-                const tr = document.createElement('tr');
-                tr.className = "hover:bg-slate-50/60 transition";
-                tr.innerHTML = `
-                    <td class="py-3 px-3">
-                        <span class="inline-block px-2 py-0.5 bg-indigo-50 text-indigo-700 border border-indigo-200 rounded font-bold text-xs mb-1">${c.division}</span>
-                        <div class="text-xs text-slate-400">${dateStr}</div>
-                    </td>
-                    <td class="py-3 px-3">
-                        <span class="inline-block px-2 py-0.5 rounded text-xs font-semibold border ${typeColor} mb-1">${c.type}</span>
-                        <div class="font-semibold text-slate-900">${escapeHtml(c.title)}</div>
-                        ${c.notes ? `<div class="text-xs text-slate-400 italic mt-0.5">${escapeHtml(c.notes)}</div>` : ''}
-                    </td>
-                    <td class="py-3 px-3">
-                        <a href="${escapeHtml(c.url)}" target="_blank" class="inline-flex items-center text-indigo-600 hover:text-indigo-800 font-medium text-xs bg-indigo-50 px-2.5 py-1.5 rounded-lg border border-indigo-100 transition">
-                            <i class="fa-solid fa-external-link mr-1.5"></i> Buka Link Tulisan
-                        </a>
-                    </td>
-                    <td class="py-3 px-3 text-right">
-                        <button onclick="deleteContentItem('${c.id}')" class="p-1.5 bg-slate-100 text-slate-600 hover:bg-slate-200 rounded-lg transition"><i class="fa-solid fa-trash"></i></button>
-                    </td>
+                html += `
+                    <tr class="hover:bg-slate-50 transition">
+                        <td class="py-3 px-3">
+                            <div class="font-bold text-slate-700 flex items-center">
+                                <span class="bg-slate-200 text-slate-700 text-xs px-2 py-0.5 rounded mr-1.5">${d.divisi}</span>
+                            </div>
+                            <div class="text-xs text-slate-500 mt-1"><i class="fa-regular fa-calendar mr-1"></i>${d.tanggal} (${d.jam})</div>
+                        </td>
+                        <td class="py-3 px-3">
+                            <div class="font-semibold text-slate-800">${d.judul}</div>
+                            <div class="text-xs text-slate-400">${d.catatan || ''}</div>
+                        </td>
+                        <td class="py-3 px-3 text-xs text-slate-600">
+                            <div><strong>Host:</strong> ${d.host}</div>
+                            <div><strong>Narsum:</strong> ${d.narsum}</div>
+                        </td>
+                        <td class="py-3 px-3">
+                            <span class="inline-block px-2.5 py-1 rounded-full text-xs font-semibold border ${badgeStatus}">${d.status}</span>
+                        </td>
+                        <td class="py-3 px-3 text-right space-x-1">
+                            <button onclick="updateStatus('${d.id}', 'Disetujui (Approved)')" title="Setujui" class="bg-emerald-50 text-emerald-600 hover:bg-emerald-100 p-1.5 rounded-lg text-xs">
+                                <i class="fa-solid fa-check"></i>
+                            </button>
+                            <button onclick="updateStatus('${d.id}', 'Perlu Reschedule / Bentrok')" title="Reschedule" class="bg-amber-50 text-amber-600 hover:bg-amber-100 p-1.5 rounded-lg text-xs">
+                                <i class="fa-solid fa-clock-rotate-left"></i>
+                            </button>
+                            <button onclick="deletePodcast('${d.id}')" title="Hapus" class="bg-rose-50 text-rose-600 hover:bg-rose-100 p-1.5 rounded-lg text-xs">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
                 `;
-                tbody.appendChild(tr);
             });
+            document.getElementById('table-podcast-body').innerHTML = html || `<tr><td colspan="5" class="text-center py-6 text-slate-400">Belum ada jadwal podcast yang diajukan.</td></tr>`;
         }
-
-        function escapeHtml(str) {
-            if (!str) return '';
-            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
-        }
-
-        window.onload = function() {
-            renderPodcastTable();
-            renderContentTable();
-        };
     </script>
 </body>
 </html>
